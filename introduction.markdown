@@ -1,8 +1,6 @@
 ---
 layout: default
-title: GitNest
 ---
-
 ## Comparison to submodules, subtrees
 
 The whole behaviour and interface of GitNest has been made very similar to git-submodules, so if you are familiar with submodules then you should feel right at home using GitNest. However its also our aim to make the experience as streamlined as possible for the novice - user, and do away with the more cumbersome parts. So there are some important differences. 
