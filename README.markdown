@@ -6,6 +6,9 @@ GitNest is a small command-line tool managing cloned repositories within a main 
 
 For more information, please see:
 
-[Indroduction](http://github.com/dreamcat4/gitnest/blob/master/introduction)
+[Indroduction](http://github.com/dreamcat4/gitnest/blob/master/introduction.markdown)
+
 [Usage and examples](http://github.com/dreamcat4/gitnest/blob/master/usage-and-examples.markdown)
+
 [Website](http://dreamcat4.github.com/gitnest/)
+
