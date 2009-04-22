@@ -1,14 +1,10 @@
 # GitNest: Submodules for the rest of us
 
-GitNest is a small command-line tool managing cloned repositories within a main repository. In short, GitNest aims to be yet another submodules-a-like scheme, however vastly improved.
+GitNest is a small command-line tool managing cloned repositories within a main repository. In short, GitNest aims to be yet another submodules-a-like scheme, however vastly improved. The following pages are available here to help explain the ins-and-outs.
 
-## Links
+* [Indroduction](http://github.com/dreamcat4/gitnest/blob/master/introduction.markdown)
+* [Usage and examples](http://github.com/dreamcat4/gitnest/blob/master/usage-and-examples.markdown)
 
-For more information, please see:
 
-[Indroduction](http://github.com/dreamcat4/gitnest/blob/master/introduction.markdown)
-
-[Usage and examples](http://github.com/dreamcat4/gitnest/blob/master/usage-and-examples.markdown)
-
-[Website](http://dreamcat4.github.com/gitnest/)
+Or visit the [Website](http://dreamcat4.github.com/gitnest/).
 
