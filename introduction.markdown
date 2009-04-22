@@ -1,3 +1,8 @@
+---
+layout: default
+title: GitNest
+---
+
 ## Comparison to submodules, subtrees
 
 The whole behaviour and interface of GitNest has been made very similar to git-submodules, so if you are familiar with submodules then you should feel right at home using GitNest. However its also our aim to make the experience as streamlined as possible for the novice - user, and do away with the more cumbersome parts. So there are some important differences. 
@@ -21,8 +26,8 @@ If you would like to contribute to GitNest, either the command line version or t
 Its fair to say that the original author of GitNest has little intention to implement any of these features himself. However they are suggested features and currently missing from the RubyGem implementation. For certain users, then many items on this list might be considered 'must haves'.
 
 	* Implement foreach and forall actions.
-	* Support for converting from git-submodules -> GitNest.
-	* Support for converting from GitNest -> git-submodules.
+	* Support for converting from git-submodules -&gt GitNest.
+	* Support for converting from GitNest -&gt git-submodules.
 	* Rudimentary support for converting from GitNest to braid-managed subtrees and back again (harder).
 	* A way to import from nested subversion repositories (a script around git-svn clone)
 	* A way to update and sync subversion repositories (probably foreach git-svn).
@@ -63,9 +68,9 @@ Then sourcing repositories for the first time, gitnest will first look in ~/.git
     
 ## If you dont know whether the repository is a gitnest repository
 
-Usually you will obtain a repository to work on by typing "git-clone <url>" or "git clone <url>" on the command line. However this will only fetch the parent repository. If you are unsure whether a repository contains nested repositories, then run the following command always:
+Usually you will obtain a repository to work on by typing "git-clone &lturl&gt" or "git clone &lturl&gt" on the command line. However this will only fetch the parent repository. If you are unsure whether a repository contains nested repositories, then run the following command always:
 
-    gitnest clone <url>
+    gitnest clone &lturl&gt
     
 This will execute "git-clone", and that attempt to read the .gitnest file recursively in each repository and fetch / initialize any nested repositories. A .gitnest file is very similar to a .gitmodules file. It resides in the root folder of the parent repository and simply contains a list of each child repository, the url to fetch it from, and path specifying its location.
 

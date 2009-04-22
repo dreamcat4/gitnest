@@ -1,3 +1,8 @@
+---
+layout: default
+title: GitNest
+---
+
 ## Workflow
 
  * Hack, commit, hack, commit, etc, etc
