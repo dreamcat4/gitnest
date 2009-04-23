@@ -34,7 +34,7 @@ Usually this is a consideration when merging between and old branch and a new br
 
 For historical reasons, gitnest has first been implemented as a ruby gem, following on from dchelimsky's excellent rake tasks in the RSpec project. This gem was also heavily influenced by the excellent braid RubyGem. Braid has a much similar interface, however implements the inner repositories as merged subtrees rather than separate repositories / submodules within the parent.
 
-It may be beneficial for the wider community that GitNest be re-writen as a generic command-line tool (bash, C/C++). This would remove the ruby requirement and to have rubygems installed.
+It may be beneficial for the wider community that GitNest be re-writen as a generic command-line tool (bash, C/C++). This would remove the necessity for rubygems to be installed. 
 
 If you would like to contribute to GitNest, either the command line version or the Ruby Gem, please see "Todo, feature improvement, suggestions (FIS)" section following.
 
