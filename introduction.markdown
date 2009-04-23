@@ -5,13 +5,30 @@ title: GitNest
 
 ## Comparison to submodules, subtrees
 
-The whole behaviour and interface of GitNest has been made very similar to git-submodules, so if you are familiar with submodules then you should feel right at home using GitNest. However its also our aim to make the experience as streamlined as possible for the novice - user, and do away with the more cumbersome parts. So there are some important differences. 
+There are some important differences. 
 
 * Remotes may be flexibly-sourced, and dont need to be hard-coded into the .gitmodules file. Instead, a path-checking failover scheme is adopted whereby GitNest will check through popular repository locations, and clone from the first match found. This is especially useful if you are checking out your own copies of an official 'set' of repositories. Popular locations are GitHub, local (on-disk), and G
 
 * Commit SHA-1's are no longer tracked in the base tree. Instead branches or tags may be used for enforcing a dependency of the parent repository on a required version of the subrepository. Its optional to specify a particular branch or tag for any given repository. The default behaviour which is to sync with the master branch. This makes it easier when commiting changes, as you no longer have to commit the SHA-1 of the sub-repository into the parent repository every time you have made a commit in the sub-repository.This is a departure from the submodules methodology of keeping everything in check, every commit. However the benefits of moving dependency tracking to a per-branch basis are thought to be substantial. Or for any given child repository, you may specify the --no-branch option, which will mean no branch information need be recorded. Then the sync will have no effect, and not try to pull in changes automatically from the master.
 
-* GitNest also records repository paths in the .gitignore file. This means that merging two branches of a repository that has been switched over to GitNest is much safer operation on the parent repository. After the merge 'gitnest update' will detect 
+* GitNest also records repository paths in the .gitignore file. This means that merging two branches of a repository that has been switched over to GitNest is much safer operation on the parent repository. After the merge 'gitnest update' will detect.
+
+* There are no special kinds of subtrees in gitnest, except as per normal business for any regular git repository. A subtree exists only in relation to its' own .git repository, and a subtree cannot be shared between, or straddle repositories. Its intended that a whole git repository is the atomic unit here, which may be arbitrarily nested. The whole nest structure is recursive, so a single gitnest-clone or gitnest-update will iteratively dril down through all of the nested repositories. So if you are including a library, and that library also includes its own gitnest dependancies, those will be pulled in also.
+
+* The same repository may be re-used several times, arbitrarily mounted in several places simultaneously. In this situation its necessary to push up changes to the remote repository first. Then run a gitnest-update which will fetch them into the other working copies.
+
+
+## Merging subtrees, non-gitnest repositories, path conflicts  
+
+Usually this is a consideration when merging between and old branch and a new branch, or moving from a pre-existing system to gitnest. The 3 common Scenarios are as follows:
+
+1) A repository with git-submodules, and a gitnest repository
+2) A managed-subtrees repository (braid), and a gitnest repository
+3) A repository with paths and files conflicting with the gitnest repository
+
+* There are no specially managed subtrees in gitnest. In gitnest, all merging is handled separately within each repository and on a per-repository basis. If attempting to merge a braided repository with a gitnest repository, there are 2 scenarios. 1) If the working repository is gitnested then contains an ignored subfolder housing another .git working repository. The subfolder part cannot be merged from running git-merge in the parent. It will simply be ignored / discarded during the merge. However you may attempt to cd into the child repository and then merge the subtree - part afterward as a second action.
+
+
 
 ## Implementation, contribution
 
@@ -57,14 +74,6 @@ Then sourcing repositories for the first time, gitnest will first look in ~/.git
 	http://git.sv.gnu.org/r/a2ps.git
 	ssh://git.sv.gnu.org/srv/git/a2ps.git
 	
-## Installing
-
-    # Do you have rubygems installed? You can check by typing:
-    gem --version
-    # Then run the following if you haven't done so before:
-    gem sources -a http://gems.github.com
-    # Install the gem:
-    gem install dreamcat4-gitnest
     
 ## If you dont know whether the repository is a gitnest repository
 
@@ -119,36 +128,6 @@ The above specification file defines the following properties:
  * 1 was created by running "gitnest add git@github.com:dreamcat4/railsapp-lib.git lib/"
  * 2 was created by running "gitnest add -g git@github.com:dreamcat4/geokit-gem.git --branch development"
  * 3 was created by running "gitnest add -p git@github.com:dreamcat4/geokit-rails.git"
-
-### Commands
-
-add
-remove
-update
-sync
-move
-foreach
-forall
-diff 
-status
-setup
-
-## Update
-
-Jeweler gives you tasks for building and installing your gem:
-
-    rake build
-    rake install
-
-## Sync
-
-Jeweler tracks the version of your project. It assumes you will be using a version in the format `x.y.z`. `x` is the 'major' version, `y` is the 'minor' version, and `z` is the patch version.
-
-Initially, your project starts out at 0.0.0. Jeweler provides Rake tasks for bumping the version:
-
-    rake version:bump:major
-    rake version:bump:minor
-    rake version:bump:patch
 
 ## Releasing to GitHub
 
