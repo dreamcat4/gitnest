@@ -15,7 +15,13 @@
   		color: #000000;
     }
     #container {
+	border-left: 1px solid rgb(222, 222, 222) !important;
+	border-right: 1px solid rgb(222, 222, 222) !important;
+	border-left: 0px solid rgb(222, 222, 222) !important;
+	border-right: 0px solid rgb(222, 222, 222) !important;
       margin: 0 auto;
+		padding-right: 3em !important;
+		padding-left: 3em !important; 
       width: 700px;
     }
 		h1 { font-size: 3.8em; color: #6c05fb; margin-bottom: 3px; }
@@ -26,8 +32,19 @@
     a { color: #6c05fb; }
     .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
     .download { float: right; }
-		pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+		pre { 
+		border: 1px solid rgb(222, 222, 222) !important;
+		<!-- background-color: #93fa04 !important; -->
+		font: normal normal normal 115%/normal Monaco, 'Courier New', monospace;		
+		color: rgb(68, 68, 68) !important;
+		font-size: 90% !important;
+		line-height: 1.5em !important;
+		padding-right: 2em !important;
+		padding-left: 2em !important; 
+		padding-top: 1em !important;
+		padding-bottom: 1em !important; 
+		}
+    hr { border: 1; width: 80%; border-bottom: 1px solid #aaa}
     .footer { text-align:center; padding-top:30px; font-style: italic; }
 	</style>
 	
@@ -50,7 +67,7 @@
       <span class="small">by <a href="http://github.com/dreamcat4">dreamcat4</a></small></h1>
 
     <div class="description">
-      Submodules for the rest of us
+      Submodules for the rest of us!
     </div>
 
     <!-- <h2>Dependencies</h2>
