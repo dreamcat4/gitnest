@@ -1,0 +1,10 @@
+site: http://www.quickribbon.com/#
+ribbon-text: In Development
+ribbon-hyperlink: http://github.com/dreamcat4/gitnest/tree/master
+font: Arial - unicode support 
+size: 12px
+text-color: FFFEE6
+ribbon-style: postal
+ribbon-color1: 072029
+ribbon-color2: 072029
+ribbon-color3: 072029
