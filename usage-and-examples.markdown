@@ -42,6 +42,17 @@ A git nest is a structure of nested git repositories, much like submodules. Ther
 	# Remove the repository in lib/ruby-lib/. Update .gitnest, .gitignore.
 	gitnest remove "lib/ruby-lib" 
 
+
+## Workflow
+
+    gitnest-add <arguments>
+
+ * Executes the gitnest command `add` with `<arguments>`
+ * If command successful, updates .gitnest and .gitignore
+ * Commits `.gitnest` and `.gitignore` to HEAD with msg `"GitNest: Repository-X added in 'path/to/repository-x/'"`
+
+All gitnest commands perform roughly the above sequence; modifying the .gitnest file where applicable and recording the action as change history. However GitNest is unable to commit its changes if you have other pending changes. `git-stash` hides your index and working files prior to running a gitnest command (and `git-stash apply` shall restore them). You can wipe away all working files and index with `git reset --hard`.
+	
 <!-- ## Sync
 
 Gitnest can track the version of your repositories. By default gitnest assumes that you will be staying up-to date with the master branch. gitnest-update --track and --no-track will switch on and off tracking for any given repository.
@@ -109,17 +120,6 @@ Guide to pushing code up to repositories
 	\# user 2
 	gitnest update  -->
 
-
-## Workflow Example
-
-    gitnest-add <arguments>
-
- * Executes the gitnest command `add` with `<arguments>`
- * If command successful, updates .gitnest and .gitignore
- * Commits `.gitnest` and `.gitignore` to HEAD with msg `"GitNest: Repository-X added in 'path/to/repository-x/'"`
-
-All gitnest commands perform roughly the above sequence; modifying the .gitnest file where applicable and recording the action as change history. However GitNest is unable to commit its changes if you have other pending changes. `git-stash` hides your index and working files prior to running a gitnest command (and `git-stash apply` shall restore them). You can wipe away all working files and index with `git reset --hard`.
-
 <!-- ## Updating with conflicts
 
 If an update creates a conflict in one of the repositories, gitnest will leave the partially commited files in your working copy, just like a normal git merge conflict would. You will then have to resolve all conflicts and manually run 'git commit'. The commit message is already prepared. -->
@@ -146,6 +146,7 @@ status -->
 -p --rails_plugin
 -r --rails
 -s --stash
+--no-merge (calls git-fetch instead of git-pull)
 -f --force -->
 
 
