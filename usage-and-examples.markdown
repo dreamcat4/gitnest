@@ -146,6 +146,7 @@ status -->
 -p --rails_plugin
 -r --rails
 -s --stash
+--no-merge (calls git-fetch instead of git-pull)
 -f --force -->
 
 
