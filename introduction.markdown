@@ -119,49 +119,6 @@ The above specification file defines the following properties:
  * 2 was created by running "gitnest add -g git@github.com:dreamcat4/geokit-gem.git --branch development"
  * 3 was created by running "gitnest add -p git@github.com:dreamcat4/geokit-rails.git"
 
-## Using a gitnest repository
-
-Example:
-
-    gitnest-add <arguments>
-
-Does the following for you:
-
- * Executes the gitnest command 'add' with <arguments>
- * If command successful, updates .gitnest and .gitignore
- * Commits '.gitnest' and '.gitignore' to HEAD with msg "GitNest: Repository-X added in 'path/to/repository-x/'"
-
-All gitnest commands perform roughly the above sequence; modifying the .gitnest file where applicable and recording the action as change history. However GitNest is unable to commit its changes if you have other pending changes. 'git-stash' will clean your index and working files prior to running a gitnest command (and 'git-stash apply' shall restore them). You can reset your working files and index with 'git reset --hard'.
-
-## Typical usage
-	
-	# From the parent, update the sub-repository "ruby-lib" to branch "dev". (pulls and merges).
-	# Also set "lib/ruby-lib" to follow branch "dev" whenever cloning or syncing. 
-	gitnest update "lib/ruby-lib" --branch "dev"
-	
-	# Business as usual in the nested repository.
-	cd "rails-app/lib/ruby-lib" && git-branch; git-commit; git-merge; git-push;
-	
-	# Or sync the "ruby-lib" repository back to the setting stored in .gitnest.
-	cd "rails-app" && gitnest sync "lib/ruby-lib" 
-
-	# "lib/ruby-lib" is now on branch "dev"
-	
-	# Move the repository "ruby-lib" to a different directory.
-	gitnest move "lib/ruby-lib" "vendor/lib/ruby-lib"
-	
-	# Print to stdout a tree diagram showing the .gitnest file structure.
-	gitnest show 
-	
-	# Remove the repository in lib/ruby-lib/. Update .gitnest, .gitignore.
-	gitnest remove "lib/ruby-lib" 
-	
-	# Assign a quickreference label to be used in other gitnest commands.
-	gitnest label --add "libs" "lib/ruby-lib/"
-	gitnest label --add "libs" "lib/ruby-lib-2/"
-
-For a detailed description of all commands, type 'gitnest help'.
-
 
 ## Merging subtrees, non-gitnest repositories, path conflicts  
 

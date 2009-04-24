@@ -9,60 +9,54 @@ title: GitNest
 * gitnest requires *git* and *rubygems*
 * you must be in a repository with at least one commit in it
 
-## Starting point
-
-  git init project && cd project
-  touch README
-  git commit -a -m "new repository"
-
-There is only one type of repository in gitnest: a fully cloned, separate working repositories. Most people also have a hosted public repository that you push your changes to. We assume that your public repositor(y/ies) are bare, and so shall only ever be pushed the .gitnest reference file.
-
-Whether any given repository is a root, a child, or a leaf node, all repositories are treated with equally in gitnest. And there are no complex associations between repositories, or anything that cannot be determined by looking at the .gitnest reference file. 
-
-
-Full mirrors are useful when you want to view imported history in your own project. You usually want this if the mirror is also a repository you have access to, for example, when using shared code across projects.
-
-Please note that you *cannot change* between mirror types after the initial add. You'll have to remove the mirror and add it again.
-
-h2. Built in help
+## Built in help
 
 You can invoke the built in help to see all the available commands or the flags or a command:
 
   braid help
   braid help add # or braid add --help
 
-h2. Adding a mirror
+## Starting point
+
+There is only one type of repository in gitnest: a fully cloned, working repository. Whether any given repository is a root, a child, or a leaf node, all repositories are treated pretty much equally in gitnest. There are no complex bi-directional associations between repositories, or anything that cannot be seen by examining the .gitnest configuration file. 
+
+## Adding a mirror
 
   # braid help add
   braid add git://github.com/rails/rails.git vendor/rails
   braid add -p git://github.com/mbleigh/seed-fu.git
 
-h2. Adding mirrors with revisions
+## Adding mirrors with specific branches 
 
   braid add --revision bf1b1e0 git://github.com/rails/rails.git vendor/rails
   braid add --rails_plugin --type svn --revision 32 http://oauth-plugin.googlecode.com/svn/trunk/oauth_plugin
 
-h2. Adding mirrors with full history
+## Overriding default mirrors
 
   braid add --full --type svn --revision 403 http://oauth.googlecode.com/svn/code/ruby/oauth vendor/oauth
   braid add --full --rails_plugin git://github.com/mislav/will_paginate.git vendor/plugins/will_paginate
 
-h2. Updating mirrors
+## Updating mirrors
 
   braid update vendor/plugins/cache_fu
   braid update
 
-h2. Updating mirrors with conflicts
+## Update
 
-If a braid update creates a conflict, braid will stop execution and leave the partially commited files in your working copy, just like a normal git merge conflict would.
+Jeweler gives you tasks for building and installing your gem:
 
-You will then have to resolve all conflicts and manually run @git commit@. The commit message is already prepared.
+    rake build
+    rake install
 
+## Sync
 
-## Locking and unlocking mirrors
+Jeweler tracks the version of your project. It assumes you will be using a version in the format `x.y.z`. `x` is the 'major' version, `y` is the 'minor' version, and `z` is the patch version.
 
-  braid update --revision 6c1c16b vendor/rails
-  braid update --head vendor/rails
+Initially, your project starts out at 0.0.0. Jeweler provides Rake tasks for bumping the version:
+
+    rake version:bump:major
+    rake version:bump:minor
+    rake version:bump:patch
 
 ## Showing local changes made to mirrors
 
@@ -78,12 +72,32 @@ You will then have to resolve all conflicts and manually run @git commit@. The c
 	gitnest update 
 
 
-## Workflow
- * 
- * Hack, commit, hack, commit, etc, etc
- * `rake version:bump:patch release` to do the actual version bump and release
- * Have a delicious scotch
- * Install [gemstalker](http://github.com/technicalpickles/gemstalker), and use it to know when gem is built. It typically builds in a few minutes, but won't be installable for another 15 minutes.
+	# From the parent, update the sub-repository "ruby-lib" to branch "dev". (pulls and merges).
+	# Also set "lib/ruby-lib" to follow branch "dev" whenever cloning or syncing. 
+	gitnest update "lib/ruby-lib" --branch "dev"
+
+	# Business as usual in the nested repository.
+	cd "rails-app/lib/ruby-lib" && git-branch; git-commit; git-merge; git-push;
+
+	# Or sync the "ruby-lib" repository back to the setting stored in .gitnest.
+	cd "rails-app" && gitnest sync "lib/ruby-lib" 
+
+	# "lib/ruby-lib" is now on branch "dev"
+
+	# Move the repository "ruby-lib" to a different directory.
+	gitnest move "lib/ruby-lib" "vendor/lib/ruby-lib"
+
+	# Print to stdout a tree diagram showing the .gitnest file structure.
+	gitnest show 
+
+	# Remove the repository in lib/ruby-lib/. Update .gitnest, .gitignore.
+	gitnest remove "lib/ruby-lib" 
+
+	# Assign a quickreference label to be used in other gitnest commands.
+	gitnest label --add "libs" "lib/ruby-lib/"
+	gitnest label --add "libs" "lib/ruby-lib-2/"
+
+For a detailed description of all commands, type 'gitnest help'.
 
 
 ## Operating on multiple repositories
@@ -97,17 +111,20 @@ You will then have to resolve all conflicts and manually run @git commit@. The c
 	# Or use 'forall' to also run the command in the current-level directory.
 	gitnest forall git-diff
 
+## Workflow Example
 
-## Advanced usage and configuration
+    gitnest-add <arguments>
 
-	# Run command for a subset of repositories which are labeled.
-	gitnest add --config -p "" 
+ * Executes the gitnest command 'add' with <arguments>
+ * If command successful, updates .gitnest and .gitignore
+ * Commits '.gitnest' and '.gitignore' to HEAD with msg "GitNest: Repository-X added in 'path/to/repository-x/'"
 
-	# Run arbitrary command in all of the child repositories sequentially.
-	gitnest foreach git-diff 
+All gitnest commands perform roughly the above sequence; modifying the .gitnest file where applicable and recording the action as change history. However GitNest is unable to commit its changes if you have other pending changes. 'git-stash' will clean your index and working files prior to running a gitnest command (and 'git-stash apply' shall restore them). You can reset your working files and index with 'git reset --hard'.
 
-	# Or use 'forall' to also run the command in the current-level directory.
-	gitnest forall git-diff
+## Updating with conflicts
+
+If an update creates a conflict in one of the repositories, gitnest will leave the partially commited files in your working copy, just like a normal git merge conflict would. You will then have to resolve all conflicts and manually run 'git commit'. The commit message is already prepared.
+
 
 
 ### Commands
@@ -135,24 +152,7 @@ setup
 -p --rails_plugin
 -f --force
 
-## Update
-
-Jeweler gives you tasks for building and installing your gem:
-
-    rake build
-    rake install
-
-## Sync
-
-Jeweler tracks the version of your project. It assumes you will be using a version in the format `x.y.z`. `x` is the 'major' version, `y` is the 'minor' version, and `z` is the patch version.
-
-Initially, your project starts out at 0.0.0. Jeweler provides Rake tasks for bumping the version:
-
-    rake version:bump:major
-    rake version:bump:minor
-    rake version:bump:patch
-
-## Releasing to RubyForge
+## Pushing, Releasing 
 
 Jeweler can also handle releasing to [RubyForge](http://rubyforge.org). There are a few steps you need to do before doing any RubyForge releases with Jeweler:
 
