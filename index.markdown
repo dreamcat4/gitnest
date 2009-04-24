@@ -2,76 +2,51 @@
 layout: default
 title: GitNest
 ---
-GitNest is a small command-line tool managing cloned repositories in a file hierachy, whereby one reposity sits inside the path of another repository. In short, GitNest aims to be a submodules-a-like scheme, however vastly improved. Also, the GitNest command interface borrows heavily from the braid project. So if you have used either of those in the past then should feel right at home with GitNest. - But don't worry! Its also our aim to provide the best possible experience for those who are not already familiar with such tools.
+GitNest is a small command-line tool managing cloned repositories in a file hierachy.. In short, GitNest aims to be a submodules-a-like scheme where one reposity sits inside the path of another repository. The GitNest command interface borrows heavily from [braid](http://github.com/evilchelu/braid/tree/master). If you have used either of those schemes in the past then should feel right at home with GitNest. - But don't worry if you aren't! Gitnest is fairly intuitive.
 
-## Starting point
+## Why use gitnest?
 
-There are many ways that gitnest can be used in a broader computing / vcs environment. 
-However the primary use for gitnest is as follows: 
+GitNest is a helper tool designed to complement and enhance the git-suite with an improved version of the git-submodules feature. If you are already using git, or are just starting out then it make for a great addition to the git. If you are cloning a git repository and have found a file named '.gitnest', you should really install gitnest, and then run 'gitnest-update' in the repository root.
 
-* You are writing application-level code, or a module, a library which is versioned in git. 
-* You would like to write a library to provide some of the functionality, or you would like to use someone else's library in your project which is already packaged a standalone and separate component.
-* It doesn't make sense to include the library files directly into your project, however they must or you would much prefer for them to logically reside in a subfolder of your main project.
-* The library you wish to use is also versioned in git.
-* Whilst working on your main project, you'd also like to push any fixes or improvements of the library code back upstream to the library maintainers, which is an entirely separate project.
-* You have a documentation project, a website, or spin-off project which is associated to your main software project. For certain technical / logistical reasons require this logically separable sub-project to reside within the folder structure of the main project hierachy.
-* You have already looked into git-submodules or are using git-submodules already. However some aspects don't feel or work quite the right way.
+You will want to use gitnest if you are: 
 
-The guide will assume the above use-case scenario and help show you the ins-and-outs.
+* Writing application-level code, or a module, a library which is versioned in git. 
+* Writing a library to provide some of the functionality, or you would like to use a pre-existing library in your project which is already packaged a standalone and separate component.
+* It doesn't make sense to merge the library's files in with your project, however they must or you would much prefer for them to reside in a subfolder within your project.
+* The library you wish to use is versioned in git.
+* Whilst working on your main project, you'd like to push any fixes or improvements for the library back upstream to its project maintainers.
+* You have a documentation project, a website, other spin-off project which is related to your main software project. For technical / logistical reasons you require this to reside within the folder hierachy of the main project. However it is a distinct and logically separable sub-project.
+* You have already looked into using git-submodules or are already. However certain aspects of git-submodules don't feel quite right or work the right way in practice.
+* You want to check out somebody else's code, and they have organised their repositories with gitnest.
+
+The following guide will help show you the various ins-and-outs of GitNest.
 
 ## Installation
 
-    # Do you have rubygems installed? You can check by typing:
+    # Do you have rubygems installed? (GitNest requires RubyGems >= 1.3.1)
     gem --version
-    # Then run the following if you haven't done so before:
+    
+	# Add github as a source if you haven't already:
     gem sources -a http://gems.github.com
-    # Install the gem:
+    
+	# Install gitnest:
     gem install dreamcat4-gitnest
 
 ## Quickstart
 
-	# Obtain any regular git repository - happens to be a rails app.
+In this example we have 2 repositories "rails-app" (the parent) and "ruby-lib" (a nested child).
+
+	# Obtain any regular git repository - this one is a rails app.
 	git clone git@github.com:username/rails-app.git
 	
-	# This will add/commit a ".gitnest" configfile, and also 
-	# clone / instantiate "ruby-lib.git" as a nested, working repository.
+	# Adds, commits a new ".gitnest" configuration file 
 	gitnest add git@github.com:username/ruby-lib.git "lib/ruby-lib"
-	
-	# From the parent, update the sub-repository to branch "dev". (pulls and merges).
-	# Also set "lib/ruby-lib" to follow branch "dev" whenever cloning or syncing. 
-	gitnest update "lib/ruby-lib" --branch "dev"
-	
-	# Business as usual in the nested repository in "rails-app/lib/ruby-lib".
-	cd lib/ruby-lib && git-branch && git-commit; git-merge; git-push etc.
-	
-	# Or cd back and tell the parent to sync the child  
-	cd rails-app && gitnest sync "lib/ruby-lib" --branch "dev"
-	
-	# Move sub-repo location to a slightly different place. Still nested.
-	gitnest move "lib/ruby-lib" 
-	
-	# Print a pretty.
-	gitnest show  
-	
-	# Remove the sub-repo. Deleted, gone.
-	gitnest remove "lib/ruby-lib" 
-	
-	# Create a label for "lib/ruby-lib/"
-	gitnest update --label "" "development"
 
+	# Repository "ruby-lib.git" now checked-out on branch master
+	# Path is "rails-app/lib/ruby-lib".
+
+## Links
 
 * [Indroduction](introduction.html)
 * [Usage and examples](usage-and-examples.html)
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -18,23 +18,11 @@ There are some important differences.
 * The same repository may be re-used several times, arbitrarily mounted in several places simultaneously. In this situation its necessary to push up changes to the remote repository first. Then run a gitnest-update which will fetch them into the other working copies.
 
 
-## Merging subtrees, non-gitnest repositories, path conflicts  
-
-Usually this is a consideration when merging between and old branch and a new branch, or moving from a pre-existing system to gitnest. The 3 common Scenarios are as follows:
-
-1) A repository with git-submodules, and a gitnest repository
-2) A managed-subtrees repository (braid), and a gitnest repository
-3) A repository with paths and files conflicting with the gitnest repository
-
-* There are no specially managed subtrees in gitnest. In gitnest, all merging is handled separately within each repository and on a per-repository basis. If attempting to merge a braided repository with a gitnest repository, there are 2 scenarios. 1) If the working repository is gitnested then contains an ignored subfolder housing another .git working repository. The subfolder part cannot be merged from running git-merge in the parent. It will simply be ignored / discarded during the merge. However you may attempt to cd into the child repository and then merge the subtree - part afterward as a second action.
-
-
-
 ## Implementation, contribution
 
 For historical reasons, gitnest has first been implemented as a ruby gem, following on from dchelimsky's excellent rake tasks in the RSpec project. This gem was also heavily influenced by the excellent braid RubyGem. Braid has a much similar interface, however implements the inner repositories as merged subtrees rather than separate repositories / submodules within the parent.
 
-It may be beneficial for the wider community that GitNest be re-writen as a generic command-line tool (bash, C/C++). This would remove the ruby requirement and to have rubygems installed.
+It may be beneficial for the wider community that GitNest be re-writen as a generic command-line tool (bash, C/C++). This would remove the necessity for rubygems to be installed. 
 
 If you would like to contribute to GitNest, either the command line version or the Ruby Gem, please see "Todo, feature improvement, suggestions (FIS)" section following.
 
@@ -75,20 +63,22 @@ Then sourcing repositories for the first time, gitnest will first look in ~/.git
 	ssh://git.sv.gnu.org/srv/git/a2ps.git
 	
     
-## If you dont know whether the repository is a gitnest repository
+## If you don't know its a gitnest repository
 
-Usually you will obtain a repository to work on by typing "git-clone &lturl&gt" or "git clone &lturl&gt" on the command line. However this will only fetch the parent repository. If you are unsure whether a repository contains nested repositories, then run the following command always:
+The usual convention is to check out a new repository by typing "git-clone &lturl&gt" or "git clone &lturl&gt". However with the standard git this will only ever fetch the parent repository. If you are unsure whether a repository is a gitnest repository, then you may run 'gitnest-clone' instead. Gitnest will notice if there are meant to be nested repositories, and automatically download them to the appropriate places.
 
-    gitnest clone &lturl&gt
+    gitnest clone http://somesite/git-repo.git
+
+	# Or export it to your bash .profile
+	echo "alias git-clone=\"gitnest-clone\"" >> ~/.profile
     
-This will execute "git-clone", and that attempt to read the .gitnest file recursively in each repository and fetch / initialize any nested repositories. A .gitnest file is very similar to a .gitmodules file. It resides in the root folder of the parent repository and simply contains a list of each child repository, the url to fetch it from, and path specifying its location.
+So this will perform all of the necessary initialization steps, including the regular 'git-clone', and to correctly fetch and initialize any or all nested repositories. A .gitnest file is used to store the repository references, very similar to .gitmodules and simply contains a list of each child repository, the url to fetch from, path to its desired location / mount point, etc.
 
-## Using in an existing gitnest repository
-
-If you have cloned a repository already and notice that it contains a .gitnest file, then you can just run an update. Gitnest will notice that there are no nested repositories yet, and automatically download them to the appropriate places.
+If you have already cloned the repository and notice it has a .gitnest file, then you can just run
 
     gitnest update
 
+Which will perform the remaining initialization steps and ensure that all of the sub-repositories are up-to-date.
 
 ## Sample .gitnest configuration file
 ## .gitnest
@@ -129,15 +119,63 @@ The above specification file defines the following properties:
  * 2 was created by running "gitnest add -g git@github.com:dreamcat4/geokit-gem.git --branch development"
  * 3 was created by running "gitnest add -p git@github.com:dreamcat4/geokit-rails.git"
 
-## Releasing to GitHub
+## Using a gitnest repository
 
-Jeweler handles releasing your gem into the wild:
+Example:
 
-    rake release
+    gitnest-add <arguments>
 
-It does the following for you:
+Does the following for you:
 
- * Regenerate the gemspec to the latest version of your project
- * Push to GitHub (which results in a gem being build)
- * Tag the version and push to GitHub
+ * Executes the gitnest command 'add' with <arguments>
+ * If command successful, updates .gitnest and .gitignore
+ * Commits '.gitnest' and '.gitignore' to HEAD with msg "GitNest: Repository-X added in 'path/to/repository-x/'"
+
+All gitnest commands perform roughly the above sequence; modifying the .gitnest file where applicable and recording the action as change history. However GitNest is unable to commit its changes if you have other pending changes. 'git-stash' will clean your index and working files prior to running a gitnest command (and 'git-stash apply' shall restore them). You can reset your working files and index with 'git reset --hard'.
+
+## Typical usage
+	
+	# From the parent, update the sub-repository "ruby-lib" to branch "dev". (pulls and merges).
+	# Also set "lib/ruby-lib" to follow branch "dev" whenever cloning or syncing. 
+	gitnest update "lib/ruby-lib" --branch "dev"
+	
+	# Business as usual in the nested repository.
+	cd "rails-app/lib/ruby-lib" && git-branch; git-commit; git-merge; git-push;
+	
+	# Or sync the "ruby-lib" repository back to the setting stored in .gitnest.
+	cd "rails-app" && gitnest sync "lib/ruby-lib" 
+
+	# "lib/ruby-lib" is now on branch "dev"
+	
+	# Move the repository "ruby-lib" to a different directory.
+	gitnest move "lib/ruby-lib" "vendor/lib/ruby-lib"
+	
+	# Print to stdout a tree diagram showing the .gitnest file structure.
+	gitnest show 
+	
+	# Remove the repository in lib/ruby-lib/. Update .gitnest, .gitignore.
+	gitnest remove "lib/ruby-lib" 
+	
+	# Assign a quickreference label to be used in other gitnest commands.
+	gitnest label --add "libs" "lib/ruby-lib/"
+	gitnest label --add "libs" "lib/ruby-lib-2/"
+
+For a detailed description of all commands, type 'gitnest help'.
+
+
+## Merging subtrees, non-gitnest repositories, path conflicts  
+
+Usually this is a consideration when merging between and old branch and a new branch, or moving from a pre-existing system to gitnest. The 3 common Scenarios are as follows:
+
+1) A repository with git-submodules, and a gitnest repository
+2) A managed-subtrees repository (braid), and a gitnest repository
+3) A repository with paths and files conflicting with the gitnest repository
+
+* There are no specially managed subtrees in gitnest. In gitnest, all merging is handled separately within each repository and on a per-repository basis. If attempting to merge a braided repository with a gitnest repository, there are 2 scenarios. 1) If the working repository is gitnested then contains an ignored subfolder housing another .git working repository. The subfolder part cannot be merged from running git-merge in the parent. It will simply be ignored / discarded during the merge. However you may attempt to cd into the child repository and then merge the subtree - part afterward as a second action.
+
+
+
+
+
+
 

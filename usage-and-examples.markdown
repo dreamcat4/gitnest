@@ -58,50 +58,25 @@ If a braid update creates a conflict, braid will stop execution and leave the pa
 
 You will then have to resolve all conflicts and manually run @git commit@. The commit message is already prepared.
 
-If you want to cancel the braid update and the merge, you'll have to reset your working copy and index with @git reset --hard@.
 
-h2. Locking and unlocking mirrors
+## Locking and unlocking mirrors
 
   braid update --revision 6c1c16b vendor/rails
   braid update --head vendor/rails
 
-h2. Showing local changes made to mirrors
+## Showing local changes made to mirrors
 
-  braid diff vendor/rails
+	braid diff vendor/rails
 
-h2. Working in a team
+## Working in a team
 
-There's nothing special you need to do. 
+	\# user 1
+	gitnest add some/remote/blah.git lib/blah
+	git push
 
-  \# user 1
-  braid add some/remote/blah.git lib/blah
-  git push
+	\# user 2
+	gitnest update 
 
-  \# user 2
-  git pull
-  braid update lib/blah
-
-h2. Changing a full (non-squashed) mirror (created with --full) to a squashed mirror
-
-Unfortunately, there's no easy or automatic way to do this so you'll have to get your hands dirty a bit.
-
-Use *braid diff* to get the changes made to the mirror, and save them to a happy_place.diff.
-
-  braid diff vendor/plugins/acts_as_state_machine >> ../happy_place.diff
-  braid remove vendor/plugins/acts_as_state_machine
-
-If you have local changes, at this point you'll get conflicts. You don't actually care about them, because you already have them in your diff file. It doesn't hurt to double check though. After you're positive that you have those changes someplace, just discard them and commit the merge.
-
-  git rm vendor/plugins/acts_as_state_machine/lib/acts_as_state_machine.rb
-
-Now just add the remote again, as usual:
-
-  braid add -p -t svn http://elitists.textdriven.com/svn/plugins/acts_as_state_machine/trunk
-
-And reapply your changes to it and commit them:
-
-  patch -p1 < ../happy_place.diff
-  git commit -m "reapply custom changes to aasm"
 
 ## Workflow
  * 
@@ -147,6 +122,18 @@ forall
 diff 
 status
 setup
+
+### Flags
+
+-b --branch
+-t --tag
+--no-branch
+--no-track
+-s --stash
+-r --rails
+-g --rails_gem
+-p --rails_plugin
+-f --force
 
 ## Update
 
