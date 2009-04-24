@@ -1,6 +1,5 @@
 ---
 layout: default
-title: GitNest
 ---
 GitNest is a small command-line tool managing cloned repositories in a file hierachy.. In short, GitNest aims to be a submodules-a-like scheme where one reposity sits inside the path of another repository. The GitNest command interface borrows heavily from [braid](http://github.com/evilchelu/braid/tree/master). If you have used either of those schemes in the past then should feel right at home with GitNest. - But don't worry if you aren't! Gitnest is fairly intuitive.
 
