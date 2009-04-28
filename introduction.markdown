@@ -104,14 +104,11 @@ A real-life `.gitnest` would look something like this:
 	--- 
 	lib: 
 	  branch: master
-	  type: git-clone
 	  url: git@github.com:username/railsapp-lib.git
 	vendor/gems/geokit-gem: 
 	  branch: development
-	  type: git-clone
 	  url: git@github.com:username/geokit-gem.git
 	vendor/plugins/geokit-rails: 
-	  type: git-clone
 	  url: git@github.com:username/geokit-rails.git
 	  label: x
 	/config/: 
@@ -145,7 +142,23 @@ Usually this is a consideration when merging between and old branch and a new br
 2) A managed-subtrees repository (braid), and a gitnest repository
 3) A repository with paths and files conflicting with the gitnest repository
 
-* There are no specially managed subtrees in gitnest. In gitnest, all merging is handled separately within each repository and on a per-repository basis. If attempting to merge a braided repository with a gitnest repository, there are 2 scenarios. 1) If the working repository is gitnested then contains an ignored subfolder housing another .git working repository. The subfolder part cannot be merged from running git-merge in the parent. It will simply be ignored / discarded during the merge. However you may attempt to cd into the child repository and then merge the subtree - part afterward as a second action. -->
+* There are no specially managed subtrees in gitnest. In gitnest, all merging is handled separately within each repository and on a per-repository basis. If attempting to merge a braided repository with a gitnest repository, there are 2 scenarios. 1) If the working repository is gitnested then contains an ignored subfolder housing another .git working repository. The subfolder part cannot be merged from running git-merge in the parent. It will simply be ignored / discarded during the merge. However you may attempt to cd into the child repository and then merge the subtree - part afterward as a second action.
+
+When merging a branch which has a subtree, and that subtree was deleted along the commit history, you will get a merge conflict. Although there are ignore criteria placed by gitnest in the .gitignore file, the ignore rules are not used during the checkout part of a merge. The precise nature of the conflict messages will depend upon the histories of the repository, but will look something like this.
+
+$ git merge --no-commit --stat rails-dont-merge-test
+error: refusing to lose untracked file at 'vendor/rails/railties/CHANGELOG'
+error: refusing to lose untracked file ....
+Auto-merging .gitignore
+CONFLICT (delete/modify): vendor/rails/railties/CHANGELOG deleted in HEAD and modified in 
+rails-dont-merge-test. Version rails-dont-merge-test of vendor/rails/railties/CHANGELOG left in tree.
+...
+Automatic merge failed; fix conflicts and then commit the result.
+
+Often the simplest approach is to checkout the other branch, do rm -rf <conflicting paths>, and re-commit. Then try merging again with the subtrees removed. 
+
+
+ -->
 
 <!-- ## Comparison to submodules, subtrees
 
@@ -167,6 +180,16 @@ There are some important differences.
 
 3) You are actively working on only one branch, in one copy. Then consider using tags to freeze the other copies, or applying the --no-track option. This is probably the safest aproach. -->
 
+
+<!-- ## Convert subtree to nested repository
+
+man git-filter-branch:
+
+To rewrite the repository to look as if foodir/ had been its project root, and discard all other history:
+
+    git filter-branch --subdirectory-filter foodir -- --all
+
+Thus you can, e.g., turn a library subdirectory into a repository of its own. Note the -- that separates filter-branch options from revision options, and the --all to rewrite all branches and tags. -->
 
 
 
